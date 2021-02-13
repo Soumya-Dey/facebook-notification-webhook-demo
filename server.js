@@ -13,24 +13,35 @@ app.use(cors());
 
 app.get('/', (req, res) => res.send(`Hello from localhost:${PORT}`));
 
-app.post('/webhook', (req, res) => {
+app.post('/webhook', async (req, res) => {
   console.log('hello');
   let body = req.body;
 
-  let changesArr;
   // Check the webhook event is from a Page subscription
   if (body.object === 'page') {
+    let tempPosts;
+    let postIdArr = [];
     body.entry.forEach((entry) => {
       // Gets the body of the webhook event
-      changesArr = entry.changes;
-      //   webHookChanges.forEach((change) => {
-      //     postIdArr.push(change.value.post_id);
-      //   });
+      webHookChanges = entry.changes;
+      webHookChanges.forEach((change) => {
+        postIdArr.push(change.value.post_id);
+      });
     });
 
-    console.log(changesArr);
-    // Return a '200 OK' response to all events
-    res.status(200).json(changesArr);
+    tempPosts = postIdArr.map(async (postId) => {
+      const { data } = await axios({
+        url: `https://graph.facebook.com/${postId}?access_token=${process.env.FB_LONG_LIVED_ACCESS_TOKEN}`,
+        method: 'GET',
+      });
+
+      return data;
+    });
+
+    const posts = await Promise.all(tempPosts);
+    console.log(posts);
+
+    res.status(200).json(posts);
   } else {
     // Return a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
