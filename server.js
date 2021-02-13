@@ -6,11 +6,12 @@ require('dotenv').config();
 // const env = require('./env');
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 
 app.get('/', (req, res) => res.send('Hello from localhost:5000'));
 
-app.listen(5000, () =>
+app.listen(PORT, () =>
   console.log('server started at => http://localhost:5000/')
 );
