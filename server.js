@@ -16,20 +16,20 @@ app.get('/', (req, res) => res.send(`Hello from localhost:${PORT}`));
 app.post('/webhook', (req, res) => {
   let body = req.body;
 
-  let postIdArr = [];
+  let changesArr;
   // Check the webhook event is from a Page subscription
   if (body.object === 'page') {
     body.entry.forEach((entry) => {
       // Gets the body of the webhook event
-      let webHookChanges = entry.changes;
-      webHookChanges.forEach((change) => {
-        postIdArr.push(change.value.post_id);
-      });
+      changesArr = entry.changes;
+      //   webHookChanges.forEach((change) => {
+      //     postIdArr.push(change.value.post_id);
+      //   });
     });
 
-    console.log(postIdArr);
+    console.log(changesArr);
     // Return a '200 OK' response to all events
-    res.status(200).json(postIdArr);
+    res.status(200).json(changesArr);
   } else {
     // Return a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
