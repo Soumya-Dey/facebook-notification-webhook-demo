@@ -14,6 +14,7 @@ app.use(cors());
 app.get('/', (req, res) => res.send(`Hello from localhost:${PORT}`));
 
 app.post('/webhook', (req, res) => {
+  console.log('hello');
   let body = req.body;
 
   let changesArr;
